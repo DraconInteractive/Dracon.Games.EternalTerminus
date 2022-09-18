@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1b7d0ebc54852439b3e5787cc7c4b7, type: 3}
+  m_Name: Pulse Laser
+  m_EditorClassIdentifier: 
+  displayName: TW_PL01
+  cooldown: 0.2
+  range: 90
+  trackingFOV: 0.7
+  projectile: {fileID: 1173796868849413945, guid: 97ab8485ce0fe454998fcf906b3e0fef,
+    type: 3}
