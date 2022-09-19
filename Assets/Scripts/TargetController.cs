@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class TargetController : Manager<TargetController>
 {
-    public static List<ITargetable> AllTargets = new List<ITargetable>();
+    public static List<BaseTargetable> AllTargets = new List<BaseTargetable>();
 
     public enum TargetState
     {
@@ -22,7 +22,7 @@ public class TargetController : Manager<TargetController>
     public float scanRange;
     
     public static bool trackingTargets;
-    public (ITargetable, float) trackedTarget;
+    public (BaseTargetable, float) trackedTarget;
     public TargetState state;
     private WeaponController weapons;
     
@@ -115,7 +115,7 @@ public class TargetController : Manager<TargetController>
             trackedTarget = (null,0);
             return;
         }
-        ITargetable tempTarget = null;
+        BaseTargetable tempTarget = null;
         
         float minDot = 0;
         var viableTargets = AllTargets
@@ -142,7 +142,7 @@ public class TargetController : Manager<TargetController>
             trackedTarget = (null,0);
             return;
         }
-        ITargetable tempTarget = null;
+        BaseTargetable tempTarget = null;
         float maxRange = scanRange;
         Vector3 pos = transform.position;
         foreach (var target in AllTargets)

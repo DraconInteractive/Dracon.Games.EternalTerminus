@@ -253,6 +253,11 @@ public class FlightController : MonoBehaviour
         dockingRoutine = StartCoroutine(DockingRoutine(dock));
     }
 
+    public void StartUndocking()
+    {
+        StartCoroutine(UndockingRoutine());
+    }
+    
     // TODO properly apply offset from docking component
     // Currently assumes docking component faces same direction as ship
     IEnumerator DockingRoutine(Dock dock)
@@ -343,7 +348,20 @@ public class FlightController : MonoBehaviour
         DockingComplete();
         yield break;
     }
-    
+
+    IEnumerator UndockingRoutine()
+    {
+        Dock currentDock = Player.Instance.currentShip.dockedAt;
+        if (currentDock == null)
+        {
+            yield break;
+        }
+
+        state = State.Docking;
+//
+        state = State.InFlight;
+        yield break;
+    }
     public void CancelDocking ()
     {
         SetState(State.InFlight);

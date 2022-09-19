@@ -9,6 +9,8 @@ public class Ship : MonoBehaviour
     
     public ShipComponentAnchor[] Anchors;
 
+    public Dock dockedAt;
+    
     public delegate void OnAttachComponent(ShipComponentAnchor anchor, ShipComponent component);
     public OnAttachComponent onAttachComponent;
 

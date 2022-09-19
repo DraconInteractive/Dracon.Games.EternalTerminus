@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -101,7 +102,7 @@ public class ThirdPersonHUD : BaseHUD
             Destroy(child.gameObject);
         }
 
-        ITargetable target = TargetController.Instance.trackedTarget.Item1;
+        BaseTargetable target = TargetController.Instance.trackedTarget.Item1;
         if (target == null)
         {
             // Show only default options? 
@@ -109,9 +110,17 @@ public class ThirdPersonHUD : BaseHUD
             return;
         }
 
-        var actions = target.GetContextActions();
-        if (actions == null || actions.Length == 0)
+        var actions = target.GetContextActions().ToList();
+        if (actions.Count == 0)
         {
+            if (Player.Instance.flightController.state == FlightController.State.Docked)
+            {
+                actions.Add(new ContextAction()
+                {
+                    ID = "Undock",
+                    Action = () => { Player.Instance.currentShip.dockedAt.DockAction();}
+                });
+            }
             var actionUI = Instantiate(ctxActionPrefab, ctxMenuContainer).GetComponent<UI_ContextMenuItem>();
             actionUI.text.text = "No Actions";
             return;
@@ -123,5 +132,6 @@ public class ThirdPersonHUD : BaseHUD
             actionUI.text.text = action.ID;
             actionUI.onPress = action.Action;
         }
+        
     }
 }

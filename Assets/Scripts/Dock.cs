@@ -3,24 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dock : MonoBehaviour, ITargetable
+public class Dock : BaseTargetable 
 {
     public Transform dockingPoint;
-    public ContextAction[] actions;
     
-    public Vector3 Position()
+    public override Vector3 Position()
     {
         return dockingPoint.position;
     }
 
-    public string ID()
+    public override string ID()
     {
         return "Dock";
     }
 
     private void Start()
     {
-        actions = new ContextAction[1]
+        actions = new []
         {
             new ContextAction()
             {
@@ -28,31 +27,6 @@ public class Dock : MonoBehaviour, ITargetable
                 Action = () => DockAction()
             }
         };
-    }
-
-    private void OnEnable()
-    {
-        Register();
-    }
-
-    private void OnDisable()
-    {
-        Deregister();
-    }
-
-    public void Register()
-    {
-        TargetController.AllTargets.Add(this);
-    }
-
-    public void Deregister()
-    {
-        TargetController.AllTargets.Remove(this);
-    }
-
-    public ContextAction[] GetContextActions()
-    {
-        return actions;
     }
 
     public void DockAction()
@@ -68,8 +42,8 @@ public class Dock : MonoBehaviour, ITargetable
         }
     }
 
-    public void DockingComplete(Ship ship) 
+    public void DockingComplete(Ship ship)
     {
-        
+        ship.dockedAt = this;
     }
 }
