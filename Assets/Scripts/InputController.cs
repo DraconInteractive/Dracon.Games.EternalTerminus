@@ -100,6 +100,25 @@ public class InputController : Manager<InputController>
         }
     }
 
+    public void AssessContext()
+    {
+        bool docked = FlightController.Instance.state == FlightController.State.Docked;
+        bool menuOpen = BaseHUD.activeHUD.contextMenu.open;
+
+        if (menuOpen)
+        {
+            currentContext = Context.Menu;
+        }
+        else if (docked)
+        {
+            currentContext = Context.Docked;
+        }
+        else
+        {
+            currentContext = Context.Flight;
+        }
+    }
+    
     public Input FromID(string _id)
     {
         return AllInputs.FirstOrDefault(x => x.ID == _id);

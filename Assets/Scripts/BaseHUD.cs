@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class BaseHUD : MonoBehaviour
 {
-    public bool ctxMenuActive;
+    public static BaseHUD activeHUD;
+    
+    public UI_ContextMenu contextMenu;
+    
     public virtual void Activate()
     {
-        
+        activeHUD = this;
     }
 
     public virtual void Deactivate()
@@ -22,11 +25,22 @@ public class BaseHUD : MonoBehaviour
     
     public void ToggleCtxMenu()
     {
-        ToggleCtxMenu(!ctxMenuActive);
+        contextMenu.Toggle();
+        
+        InputController.Instance.AssessContext();
     }
 
     public virtual void ToggleCtxMenu(bool state)
     {
-        ctxMenuActive = state;
+        if (state)
+        {
+            contextMenu.Open();
+        }
+        else
+        {
+            contextMenu.Close();
+        }
+        
+        InputController.Instance.AssessContext();
     }
 }

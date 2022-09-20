@@ -25,6 +25,16 @@ public class Dock : BaseTargetable
             {
                 ID = "Dock / Undock",
                 Action = () => DockAction()
+            },
+            new ContextAction()
+            {
+                ID = "Set Hostile",
+                Action = () => Debug.Log("Fake Action")
+            },
+            new ContextAction()
+            {
+                ID = "Begin Comms",
+                Action = () => Debug.Log("Fake Action")
             }
         };
     }
@@ -38,7 +48,7 @@ public class Dock : BaseTargetable
         } 
         else if (pFlight.state == FlightController.State.Docked)
         {
-            // Undock
+            pFlight.StartUndocking();
         }
     }
 

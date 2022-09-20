@@ -18,8 +18,8 @@ public class Player : Manager<Player>
     private void Awake()
     {
         ToggleCursor(false);
-        inputController.FromID("Toggle Cursor").inputEvent += (x, y) => ToggleCursor();
-        inputController.FromID("Context Interaction").inputEvent += (x, y) => ContextInteraction();
+        inputController.FromID("Toggle Cursor").inputEvent += ToggleCursorHandler;
+        inputController.FromID("Context Interaction").inputEvent += ContextInteractionHandler;
     }
 
     private void Start()
@@ -61,6 +61,22 @@ public class Player : Manager<Player>
         DLog.Instance.AddOrUpdate(this, log);
     }
 
+    void ContextInteractionHandler(InputController.Context ctx, InputController.InputEventType evt)
+    {
+        if (evt == InputController.InputEventType.Down)
+        {
+            ContextInteraction();
+        }
+    }
+    
+    void ToggleCursorHandler(InputController.Context ctx, InputController.InputEventType evt)
+    {
+        if (evt == InputController.InputEventType.Down)
+        {
+            ToggleCursor();
+        }
+    }
+    
     void ContextInteraction()
     {
         cameraController.CurrentHUD.ToggleCtxMenu();

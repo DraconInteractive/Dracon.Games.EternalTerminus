@@ -7108,16 +7108,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6e98a38aff4c384d8ded94c2d34bc07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ctxMenuActive: 0
+  contextMenu: {fileID: 759531362}
   canvas: {fileID: 1988509499}
   crossHair: {fileID: 1673500999}
   noTargetColor: {r: 0.3, g: 0.3, b: 0.3, a: 0.8}
   targetAcquiredColor: {r: 1, g: 1, b: 0, a: 1}
   targetLockedColor: {r: 1, g: 0.478, b: 0, a: 1}
-  ctxMenuGroup: {fileID: 759531358}
-  ctxMenuContainer: {fileID: 759531356}
-  ctxActionPrefab: {fileID: 398240966134605621, guid: 5601eacaaf5f9f849a3add4c030b1fc6,
-    type: 3}
 --- !u!4 &667648532
 Transform:
   m_ObjectHideFlags: 0
@@ -7148,6 +7144,7 @@ GameObject:
   - component: {fileID: 759531359}
   - component: {fileID: 759531358}
   - component: {fileID: 759531357}
+  - component: {fileID: 759531362}
   m_Layer: 5
   m_Name: Context Menu
   m_TagString: Untagged
@@ -7197,9 +7194,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759531355}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &759531359
 MonoBehaviour:
@@ -7265,6 +7262,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759531355}
   m_CullTransparentMesh: 1
+--- !u!114 &759531362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759531355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3a2cdacb57a4994887f54d846782388, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  open: 0
+  ctxActionPrefab: {fileID: 398240966134605621, guid: 5601eacaaf5f9f849a3add4c030b1fc6,
+    type: 3}
 --- !u!1 &770706714
 GameObject:
   m_ObjectHideFlags: 0
@@ -7643,6 +7655,7 @@ MonoBehaviour:
   - {fileID: 1381701420}
   - {fileID: 1883167798}
   - {fileID: 1637514490}
+  dockedAt: {fileID: 0}
 --- !u!1 &1099814828
 GameObject:
   m_ObjectHideFlags: 0
@@ -8033,7 +8046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe17c970ef914b34986c483424951251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ctxMenuActive: 0
+  contextMenu: {fileID: 0}
 --- !u!114 &1199166022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9563,7 +9576,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dockingPoint: {fileID: 156546820}
-  actions: []
 --- !u!1 &1988509495
 GameObject:
   m_ObjectHideFlags: 0

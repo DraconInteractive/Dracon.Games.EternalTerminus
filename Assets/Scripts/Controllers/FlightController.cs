@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class FlightController : MonoBehaviour
+public class FlightController : Manager<FlightController>
 {
     public enum State
     {
@@ -193,6 +193,7 @@ public class FlightController : MonoBehaviour
         }
 
         state = newState;
+        InputController.Instance.AssessContext();
     }
     
     void CheckNewComponent(ShipComponentAnchor anchor, ShipComponent component)
@@ -345,7 +346,7 @@ public class FlightController : MonoBehaviour
         
         Debug.Log("Docking Complete");
         dock.DockingComplete(Player.Instance.currentShip);
-        DockingComplete();
+        SetState(State.Docked);
         yield break;
     }
 
@@ -356,10 +357,9 @@ public class FlightController : MonoBehaviour
         {
             yield break;
         }
-
-        state = State.Docking;
+        SetState(State.Docking);
 //
-        state = State.InFlight;
+        SetState(State.InFlight);
         yield break;
     }
     public void CancelDocking ()
@@ -367,11 +367,6 @@ public class FlightController : MonoBehaviour
         SetState(State.InFlight);
     }
 
-    void DockingComplete()
-    {
-        state = State.Docked;
-    }
-    
     public float Remap(float value, float from1, float to1, float from2, float to2) 
     { 
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2; 

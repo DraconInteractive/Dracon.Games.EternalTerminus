@@ -15,13 +15,7 @@ public class ThirdPersonHUD : BaseHUD
 
     public Color noTargetColor, targetAcquiredColor, targetLockedColor;
     
-    [Header("Context Menu")]
-    public CanvasGroup ctxMenuGroup;
-    public Transform ctxMenuContainer;
-    public GameObject ctxActionPrefab;
-    
     private bool showCrosshair;
-    
     
     public override void Activate()
     {
@@ -82,56 +76,6 @@ public class ThirdPersonHUD : BaseHUD
         }
         crossHair.rectTransform.anchorMin = screenPos;
         crossHair.rectTransform.anchorMax = screenPos;
-        
-    }
-
-    public override void ToggleCtxMenu(bool state)
-    {
-        base.ToggleCtxMenu(state);
-        ctxMenuGroup.alpha = state ? 1 : 0;
-        if (state)
-        {
-            PopulateMenu();
-        }
-    }
-
-    void PopulateMenu()
-    {
-        foreach (Transform child in ctxMenuContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
-        BaseTargetable target = TargetController.Instance.trackedTarget.Item1;
-        if (target == null)
-        {
-            // Show only default options? 
-            // None at the moment, so returning
-            return;
-        }
-
-        var actions = target.GetContextActions().ToList();
-        if (actions.Count == 0)
-        {
-            if (Player.Instance.flightController.state == FlightController.State.Docked)
-            {
-                actions.Add(new ContextAction()
-                {
-                    ID = "Undock",
-                    Action = () => { Player.Instance.currentShip.dockedAt.DockAction();}
-                });
-            }
-            var actionUI = Instantiate(ctxActionPrefab, ctxMenuContainer).GetComponent<UI_ContextMenuItem>();
-            actionUI.text.text = "No Actions";
-            return;
-        }
-        
-        foreach (var action in actions)
-        {
-            var actionUI = Instantiate(ctxActionPrefab, ctxMenuContainer).GetComponent<UI_ContextMenuItem>();
-            actionUI.text.text = action.ID;
-            actionUI.onPress = action.Action;
-        }
         
     }
 }
