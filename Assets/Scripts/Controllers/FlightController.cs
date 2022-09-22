@@ -81,7 +81,7 @@ public class FlightController : Manager<FlightController>
     private Coroutine dockingRoutine;
     private Transform cachedTransform;
     private ShipComponent dockingComponent;
-    
+    private Rigidbody rb;
     
     public float Speed
     {
@@ -94,6 +94,7 @@ public class FlightController : Manager<FlightController>
     private void Start()
     {
         cachedTransform = transform;
+        rb = GetComponent<Rigidbody>();
     }
 
     // TODO: Move actions to InputController
@@ -138,12 +139,35 @@ public class FlightController : Manager<FlightController>
         UpdateLog();
     }
 
+    private void FixedUpdate()
+    {
+        switch (state)
+        {
+            case State.InFlight:
+                InFlightTick();
+                break;
+            case State.Docked:
+                currentSpeed = 0;
+                break;
+            case State.Docking:
+                // Speed handled by docking routing
+                break;
+            case State.Fixed:
+                currentSpeed = 0;
+                break;
+            case State.Floating:
+                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, baseAcceleration * Time.deltaTime);
+                break;
+        }
+    }
+
     void InFlightTick()
     {
-        currentSpeed = Mathf.MoveTowards(currentSpeed, TargetSpeed, Acceleration * Time.deltaTime);
+        currentSpeed = Mathf.MoveTowards(currentSpeed, TargetSpeed, Acceleration * Time.fixedDeltaTime);
         
-        transform.position += transform.forward * (currentSpeed * Time.deltaTime);
-
+        Vector3 targetPos = cachedTransform.position + cachedTransform.forward * (currentSpeed * Time.deltaTime);
+        rb.MovePosition(targetPos);
+        
         Vector3 rotationSolver = new Vector3();
 
         float speedRotationMultiplier = Remap(Mathf.Abs(currentSpeed), 0, MaxSpeed, 0f, 0.8f);
@@ -157,7 +181,7 @@ public class FlightController : Manager<FlightController>
         rotationSolver.x += rotDelta.x;
         rotationSolver.y += rotDelta.y;
         rotationSolver.z += rotDelta.z;
-        transform.localRotation *= Quaternion.Euler(rotationSolver);
+        rb.MoveRotation(cachedTransform.localRotation * Quaternion.Euler(rotationSolver));
     }
     
     public void SetShip (Ship newShip)
@@ -358,7 +382,34 @@ public class FlightController : Manager<FlightController>
             yield break;
         }
         SetState(State.Docking);
-//
+        
+        Transform target = currentDock.dockingPoint;
+        if (dockingComponent == null)
+        {
+            Debug.LogWarning("Undocking Cancelled: Component Missing");
+            CancelDocking();
+        }
+
+        Transform docker = dockingComponent.transform;
+
+        // setup useful variables
+        Vector3 dockPos = target.position;
+        Vector3 hoverPos = dockPos + target.up * 5f;
+        float movementAllowance = 0.05f;
+        
+        float distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+        while (distToHoverPoint > movementAllowance)
+        {
+            // Scale speed by distance to target, capped at max 50m. Minimum speed 0.05x max, maximum speed 0.5x max
+            float speedMultiplier = Remap(Mathf.Clamp(distToHoverPoint, 0, 50), 0, 50, 0.05f, 0.5f);
+                
+            Vector3 velocity = Vector3.MoveTowards(docker.position, hoverPos, MaxSpeed * speedMultiplier * Time.deltaTime) - docker.position;
+            transform.position += velocity;
+                
+            distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+            yield return null;
+        }
+        
         SetState(State.InFlight);
         yield break;
     }

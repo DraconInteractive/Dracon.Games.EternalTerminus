@@ -14,35 +14,35 @@ public class CameraController : MonoBehaviour
     public int currentIndex;
     public CameraPoint CurrentPoint => cameraPoints[currentIndex];
     public BaseHUD CurrentHUD => CurrentPoint.HUD;
-    
-    [Space]
-    public float movementSpeed;
-    public float rotationSpeed;
 
     private void Start()
     {
+        mainCam = Camera.main;
         SetupInput();
     }
 
     void SetupInput()
     {
-        InputController.Instance.FromID("Previous Camera").inputEvent += (x,y) => PreviousPoint();
-        InputController.Instance.FromID("Next Camera").inputEvent += (x,y) => NextPoint();
+        InputController.Instance.FromID("Previous Camera").inputEvent += (x, y) =>
+        {
+            if (y == InputController.InputEventType.Down)
+                PreviousPoint();
+        };
+        InputController.Instance.FromID("Next Camera").inputEvent += (x,y) => 
+        {
+            if (y == InputController.InputEventType.Down)
+                NextPoint();
+        };
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (cameraPoints == null || cameraPoints.Count == 0)
         {
             return;
         }
         
-        Vector3 targetPos = cameraPoints[currentIndex].transform.position;
-        Quaternion targetRot = cameraPoints[currentIndex].transform.rotation;
-        
-        mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, targetPos, movementSpeed * Time.deltaTime);
-        mainCam.transform.rotation = Quaternion.Lerp(mainCam.transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
-        
+        cameraPoints[currentIndex].TransformCamera(mainCam.transform);
         cameraPoints[currentIndex].HUD.UpdateHUD();
     }
 

@@ -9,6 +9,19 @@ public class CameraPoint : MonoBehaviour
 
     public BaseHUD HUD;
 
+    [Space] 
+    public float baseMovementSpeed = 1;
+    public float maxMovementSpeed = 10;
+    public float rotationSpeed;
+    public virtual void TransformCamera(Transform cam)
+    {
+        float currentSpeed = Mathf.Abs(FlightController.Instance.Speed);
+        float maxSpeed = FlightController.Instance.MaxSpeed;
+        float r = currentSpeed / maxSpeed;
+        cam.position = Vector3.Lerp(cam.position, transform.position, Mathf.Lerp(baseMovementSpeed, maxMovementSpeed, r) * Time.deltaTime);
+        cam.rotation = Quaternion.Lerp(cam.rotation, transform.rotation, rotationSpeed * Time.deltaTime);
+    }
+    
     public void SetActive()
     {
         HUD.Activate();
