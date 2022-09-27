@@ -61,7 +61,7 @@ public class UI_ContextMenu : MonoBehaviour
         var actions = target.GetContextActions().ToList();
         if (actions.Count == 0)
         {
-            if (Player.Instance.flightController.state == FlightController.State.Docked)
+            if (Player.Instance.currentShip.flightState == Ship.FlightState.Docked)
             {
                 actions.Add(new ContextAction()
                 {

@@ -12,6 +12,7 @@ public class InputController : Manager<InputController>
     
     public enum Context
     {
+        None,
         Flight,
         Menu,
         Docked
@@ -102,7 +103,13 @@ public class InputController : Manager<InputController>
 
     public void AssessContext()
     {
-        bool docked = FlightController.Instance.state == FlightController.State.Docked;
+        Ship ship = Player.Instance.currentShip;
+        if (ship == null)
+        {
+            currentContext = Context.None;
+            return;
+        }
+        bool docked = ship.flightState == Ship.FlightState.Docked;
         bool menuOpen = BaseHUD.activeHUD.contextMenu.open;
 
         if (menuOpen)

@@ -28,6 +28,7 @@ public class Player : Manager<Player>
         {
             SetShip(currentShip);
         }
+        flightController.Setup();
     }
 
     public void ToggleCursor()
@@ -44,9 +45,13 @@ public class Player : Manager<Player>
 
     public void SetShip(Ship newShip)
     {
+        if (currentShip != null)
+        {
+            currentShip.Release();
+        }
         currentShip = newShip;
+        currentShip.Possess();
         //Add remove ship to cleanup hooks
-        flightController.SetShip(newShip);
         weaponController.SetShip(newShip);
         cameraController.SetShip(newShip);
         UpdateLog();

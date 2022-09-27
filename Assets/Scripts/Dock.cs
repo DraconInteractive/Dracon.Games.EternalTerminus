@@ -41,14 +41,14 @@ public class Dock : BaseTargetable
 
     public void DockAction()
     {
-        FlightController pFlight = Player.Instance.flightController;
-        if (pFlight.state == FlightController.State.InFlight)
+        Ship ship = Player.Instance.currentShip;
+        if (ship.flightState == Ship.FlightState.InFlight)
         {
-            pFlight.StartDocking(this);
+            ship.StartDocking(this);
         } 
-        else if (pFlight.state == FlightController.State.Docked)
+        else if (ship.flightState == Ship.FlightState.Docked)
         {
-            pFlight.StartUndocking();
+            ship.StartUndocking();
         }
     }
 

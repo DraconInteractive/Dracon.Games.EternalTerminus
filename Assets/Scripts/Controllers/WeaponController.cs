@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class WeaponController : MonoBehaviour
+public class WeaponController : Manager<WeaponController>
 {
     public WeaponComponent[] primaryWeapons;
     public WeaponComponent[] secondaryWeapons;

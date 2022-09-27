@@ -12,4 +12,5 @@ public class WeaponData : ScriptableObject
     [Range(0,1)]
     public float trackingFOV;
     public GameObject projectile;
+    public float projectileSpeed;
 }

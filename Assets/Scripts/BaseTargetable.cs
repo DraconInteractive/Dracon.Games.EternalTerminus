@@ -6,6 +6,7 @@ using UnityEngine;
 public class BaseTargetable : MonoBehaviour
 {
     protected ContextAction[] actions;
+    public Vector3 velocity;
     public virtual string ID()
     {
         return this.gameObject.name;
@@ -39,6 +40,8 @@ public class BaseTargetable : MonoBehaviour
     {
         return actions;
     }
+
+    
 }
 
 [System.Serializable]

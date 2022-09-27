@@ -3,19 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using Sirenix.OdinInspector;
 public class WeaponComponent : ShipComponent
 {
     public WeaponData data;
+    public WeaponAim aim;
+    [ReadOnly]
     public float currentCooldown;
     public Transform firePoint;
-    
+
+    private TargetController targetControl;
+
+    private void Start()
+    {
+        targetControl = TargetController.Instance;
+        aim.Setup(this);
+    }
+
     private void Update()
     {
         if (currentCooldown > 0)
         {
             currentCooldown -= Time.deltaTime;
         }
+        aim.UpdateAim(targetControl.trackedTarget.Item1, targetControl.state);
     }
 
     private Coroutine inputDownRoutine;
@@ -59,7 +70,9 @@ public class WeaponComponent : ShipComponent
         currentCooldown = data.cooldown;
         var go = Instantiate(data.projectile, firePoint.position, firePoint.rotation);
         var projectile = go.GetComponentInChildren<Projectile>();
-        projectile.movementSpeed += Player.Instance.flightController.Speed;
+        projectile.movementSpeed += Player.Instance.currentShip.Speed;
+        projectile.gameObject.layer = LayerMask.NameToLayer("Player");
+        projectile.movementSpeed = data.projectileSpeed;
     }
 
     private void OnDrawGizmos()

@@ -34,7 +34,7 @@ public class TargetController : Manager<TargetController>
 
     private void Update()
     {
-        UpdateCrosshair();
+        UpdateState();
         UpdateLog();
     }
 
@@ -69,8 +69,30 @@ public class TargetController : Manager<TargetController>
             GetClosestTarget();
         }
     }
+
+    public Vector3 TargetPredictedPosition(float t)
+    {
+        if (trackedTarget.Item1 == null)
+        {
+            return Vector3.zero;
+        }
+        //final pos = initial pos + speed * t + 0.5 * accel * t ^2
+        return trackedTarget.Item1.Position() + trackedTarget.Item1.velocity * t;
+    }
     
-    void UpdateCrosshair()
+    public Vector3 TargetPredictedPosition(float projectileSpeed, float targetDistance)
+    {
+        if (trackedTarget.Item1 == null)
+        {
+            return Vector3.zero;
+        }
+
+        float t = targetDistance / projectileSpeed;
+        //final pos = initial pos + speed * t + 0.5 * accel * t ^2
+        return trackedTarget.Item1.Position() + trackedTarget.Item1.velocity * t;
+    }
+
+    void UpdateState()
     {
         if (!trackingTargets)
         {
@@ -125,7 +147,6 @@ public class TargetController : Manager<TargetController>
         {
             Vector3 dir = target.Position() - transform.position;
             float dot = Vector3.Dot(transform.forward, dir.normalized);
-            Debug.Log(target.ID() + ": " + dot);
             if (dot > minDot)
             {
                 minDot = dot;
@@ -166,8 +187,13 @@ public class TargetController : Manager<TargetController>
     void UpdateLog()
     {
         string log = "<b>Tracking</b>\n";
+        log += $"State: {state}\n";
         log += $"Tracking targets: {trackingTargets}\n";
-        log += $"Target: {(trackedTarget.Item1 != null ? trackedTarget.Item1.ID() : "NULL")}";
+        log += $"Target: {(trackedTarget.Item1 != null ? trackedTarget.Item1.ID() : "NULL")}\n";
+        if (state == TargetState.TargetLocked || state == TargetState.TargetAcquired)
+        {
+            log += $"Distance to target: {Vector3.Distance(transform.position, trackedTarget.Item1.Position())}";
+        }
         DLog.Instance.AddOrUpdate(this, log);
     }
     

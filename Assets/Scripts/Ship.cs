@@ -3,23 +3,157 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Sirenix.OdinInspector;
+using Sirenix.Serialization;
+
 public class Ship : MonoBehaviour
 {
-    public ShipData data;
+    public bool playerControlled;
     
+    public ShipData data;
     public ShipComponentAnchor[] Anchors;
-
     public Dock dockedAt;
+    
+    private Transform cachedTransform;
+    private Rigidbody rb;
+    
+    public enum FlightState
+    {
+        Fixed,
+        Floating,
+        Docking,
+        Docked,
+        InFlight
+    }
+
+    #region Flight Variables
+    [FoldoutGroup("Flight")]
+    public FlightState flightState;
+    private float currentSpeed;
+    private Coroutine dockingRoutine;
+    private ShipComponent dockingComponent;
+
+    [FoldoutGroup("Flight/Main"), SerializeField, ReadOnly]
+    private float baseAcceleration, accelerationModifier;
+    [ShowInInspector, FoldoutGroup("Flight/Properties")]
+    public float Acceleration
+    {
+        get
+        {
+            return baseAcceleration + accelerationModifier;
+        }
+    }
+    
+    [ShowInInspector, FoldoutGroup("Flight/Properties")]
+    public float Speed
+    {
+        get
+        {
+            return currentSpeed;
+        }
+    }
+    
+    [FoldoutGroup("Flight/Main"), SerializeField, ReadOnly]
+    private float baseMaxSpeed, maxSpeedModifier;
+    [ShowInInspector, FoldoutGroup("Flight/Properties")]
+    public float MaxSpeed
+    {
+        get
+        {
+            return baseMaxSpeed + maxSpeedModifier;
+        }
+    }
+    [ShowInInspector, FoldoutGroup("Flight/Properties")]
+    public float Throttle
+    {
+        get
+        {
+            // change from -1 - 1 to 0 - 1
+            float throttle = ThrottleIn * -1 * 0.5f;
+            throttle += 0.5f;
+            return throttle;
+        }
+    }
+    [FoldoutGroup("Flight/Main"), SerializeField, ReadOnly]
+    private float throttleDeadzone;
+    [ShowInInspector, FoldoutGroup("Flight/Properties")]
+    public float TargetSpeed
+    {
+        get
+        {
+            float tSpeed = Mathf.Lerp(-MaxSpeed * 0.25f, MaxSpeed, Throttle);
+            // Deadzone
+            if (Mathf.Abs(tSpeed) < throttleDeadzone)
+            {
+                tSpeed = 0;
+            }
+
+            return tSpeed;
+        }
+    }
+    [FoldoutGroup("Flight/Rotation Speed"), SerializeField, ReadOnly]
+    private float yawSpeed, rollSpeed, pitchSpeed;
+    
+    [FoldoutGroup("Flight/Input"), ReadOnly]
+    public float ThrottleIn, PitchIn, YawIn, RollIn;
+    #endregion
     
     public delegate void OnAttachComponent(ShipComponentAnchor anchor, ShipComponent component);
     public OnAttachComponent onAttachComponent;
 
+    private void Awake()
+    {
+        cachedTransform = transform;
+        rb = GetComponent<Rigidbody>();
+    }
+
     private void Start()
     {
         SetupAnchors();
-        onAttachComponent += (anchor, component) => UpdateLog();
+        SetupFlight();
     }
 
+    private void Update()
+    {
+        
+    }
+
+    private void FixedUpdate()
+    {
+        switch (flightState)
+        {
+            case FlightState.InFlight:
+                FlightTick();
+                break;
+            case FlightState.Floating:
+                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, baseAcceleration * Time.deltaTime);
+                break;
+            default:
+                currentSpeed = 0;
+                break;
+        }
+    }
+
+    public void Possess()
+    {
+        playerControlled = true;
+    }
+
+    public void Release()
+    {
+        playerControlled = false;
+    }
+    
+    void SetupFlight()
+    {
+        baseAcceleration = data.acceleration;
+        baseMaxSpeed = data.maxSpeed;
+        yawSpeed = data.yawSpeed;
+        pitchSpeed = data.pitchSpeed;
+        rollSpeed = data.rollSpeed;
+        throttleDeadzone = data.throttleDeadzone;
+    }
+    
     void SetupAnchors()
     {
         // Find all pre-set components and call the event so hooks can find them
@@ -27,13 +161,45 @@ public class Ship : MonoBehaviour
         {
             ShipComponentAnchor tempAnchor = anchor;
             anchor.onComponentAttached += c => onAttachComponent(tempAnchor, c);
+            anchor.onComponentAttached += ComponentAttachedHandler;
             if (anchor.component != null)
             {
-                onAttachComponent?.Invoke(anchor, anchor.component);
-                onAttachComponent?.Invoke(tempAnchor, tempAnchor.component);
+                tempAnchor.onComponentAttached?.Invoke(tempAnchor.component);
             }
         }
         UpdateLog();
+    }
+
+    void ComponentAttachedHandler(ShipComponent component)
+    {
+        if (component is EngineComponent)
+        {
+            AssessEngines();
+        }
+        else if (component.tags.Contains(ShipComponent.Tag.Docking))
+        {
+            dockingComponent = component;
+        }
+    }
+
+    [Button]
+    public void AssessEngines()
+    {
+        var engines = GetComponentsOfType<EngineComponent>();
+            
+        accelerationModifier = 0;
+        maxSpeedModifier = 0;
+            
+        if (engines == null || engines.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var engine in engines)
+        {
+            accelerationModifier += engine.acceleration;
+            maxSpeedModifier += engine.maxSpeed;
+        }
     }
 
     public List<T> GetComponentsOfType<T>() where T : ShipComponent
@@ -50,10 +216,186 @@ public class Ship : MonoBehaviour
         return temp;
     }
 
+#region Flight
+
+    void FlightTick()
+    {
+        currentSpeed = Mathf.MoveTowards(currentSpeed, TargetSpeed, Acceleration * Time.fixedDeltaTime);
+        
+        Vector3 targetPos = cachedTransform.position + cachedTransform.forward * (currentSpeed * Time.deltaTime);
+        rb.MovePosition(targetPos);
+        
+        Vector3 rotationSolver = new Vector3();
+
+        float speedRotationMultiplier = Remap(Mathf.Abs(currentSpeed), 0, MaxSpeed, 0f, 0.8f);
+        Vector3 rotDelta = new Vector3()
+        {
+            x = PitchIn * pitchSpeed,
+            y = YawIn * yawSpeed,
+            z = RollIn * rollSpeed
+        };
+        rotDelta *= (1 - speedRotationMultiplier) * Time.deltaTime;
+        rotationSolver.x += rotDelta.x;
+        rotationSolver.y += rotDelta.y;
+        rotationSolver.z += rotDelta.z;
+        rb.MoveRotation(cachedTransform.localRotation * Quaternion.Euler(rotationSolver));
+    }
+    
+    public void SetFlightState(FlightState newState)
+    {
+        if (newState != FlightState.Docking && dockingRoutine != null)
+        {
+            StopCoroutine(dockingRoutine);
+        }
+
+        flightState = newState;
+        if (playerControlled)
+            InputController.Instance.AssessContext();
+    }
+    
+    public void StartDocking (Dock dock)
+    {
+        SetFlightState(FlightState.Docking);
+        if (dockingRoutine != null) { StopCoroutine(dockingRoutine); }
+        dockingRoutine = StartCoroutine(DockingRoutine(dock));
+    }
+    
+    // TODO properly apply offset from docking component
+    // Currently assumes docking component faces same direction as ship
+    IEnumerator DockingRoutine(Dock dock)
+    {
+        Transform target = dock.dockingPoint;
+        if (dockingComponent == null)
+        {
+            Debug.LogWarning("Docking Cancelled: Component Missing");
+            CancelDocking();
+        }
+
+        Transform docker = dockingComponent.transform;
+
+        // setup useful variables
+        float rotSpeed = Mathf.Abs(pitchSpeed) + Mathf.Abs(yawSpeed) + Mathf.Abs(rollSpeed);
+        rotSpeed /= 3;
+        rotSpeed *= 0.5f;
+        Vector3 dockPos = target.position;
+        Vector3 hoverPos = dockPos + target.up * 5f;
+        float rotationAllowance = 0.5f;
+        float movementAllowance = 0.05f;
+        
+        Vector3 dirToHoverPoint = hoverPos - docker.position;
+        Quaternion targetRot = Quaternion.LookRotation(dirToHoverPoint);
+        float angle = Quaternion.Angle(transform.rotation, targetRot);
+        
+        while (angle > rotationAllowance)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+                
+            dirToHoverPoint = hoverPos - docker.position;
+            targetRot = Quaternion.LookRotation(dirToHoverPoint);
+            angle = Quaternion.Angle(transform.rotation, targetRot);
+            yield return null;
+        }
+        
+        float distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+        while (distToHoverPoint > movementAllowance)
+        {
+            // Scale speed by distance to target, capped at max 50m. Minimum speed 0.05x max, maximum speed 0.5x max
+            float speedMultiplier = Remap(Mathf.Clamp(distToHoverPoint, 0, 50), 0, 50, 0.05f, 0.5f);
+                
+            Vector3 velocity = Vector3.MoveTowards(docker.position, hoverPos, MaxSpeed * speedMultiplier * Time.deltaTime) - docker.position;
+            transform.position += velocity;
+                
+            distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+            yield return null;
+        }
+        
+        targetRot = target.rotation;
+        angle = Quaternion.Angle(transform.rotation, targetRot);
+        while (angle > rotationAllowance)
+        {
+            transform.rotation =
+                Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+                
+            angle = Quaternion.Angle(transform.rotation, targetRot);
+            yield return null;
+        }
+        
+        yield return new WaitForSeconds(0.5f);
+        
+        float distToDock = Vector3.Distance(docker.position, dockPos);
+        while (distToDock > movementAllowance)
+        {
+            // Scale speed by distance to target, capped at max 50m. Minimum speed 0.05x max, maximum speed 0.25x max
+            float speedMultiplier = Remap(Mathf.Clamp(distToDock, 0, 0.5f), 0, 50, 0.05f, 0.1f);
+                
+            Vector3 velocity = Vector3.MoveTowards(docker.position, dockPos, MaxSpeed * speedMultiplier * Time.deltaTime) - docker.position;
+            transform.position += velocity;
+                
+            distToDock = Vector3.Distance(docker.position, dockPos);
+            yield return null;
+        }
+        
+        dock.DockingComplete(Player.Instance.currentShip);
+        SetFlightState(FlightState.Docked);
+        yield break;
+    }
+    
+    public void StartUndocking()
+    {
+        StartCoroutine(UndockingRoutine());
+    }
+    
+    IEnumerator UndockingRoutine()
+    {
+        Dock currentDock = Player.Instance.currentShip.dockedAt;
+        if (currentDock == null)
+        {
+            yield break;
+        }
+        SetFlightState(FlightState.Docking);
+        
+        Transform target = currentDock.dockingPoint;
+        if (dockingComponent == null)
+        {
+            Debug.LogWarning("Undocking Cancelled: Component Missing");
+            CancelDocking();
+        }
+
+        Transform docker = dockingComponent.transform;
+
+        // setup useful variables
+        Vector3 dockPos = target.position;
+        Vector3 hoverPos = dockPos + target.up * 5f;
+        float movementAllowance = 0.05f;
+        
+        float distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+        while (distToHoverPoint > movementAllowance)
+        {
+            // Scale speed by distance to target, capped at max 50m. Minimum speed 0.05x max, maximum speed 0.5x max
+            float speedMultiplier = Remap(Mathf.Clamp(distToHoverPoint, 0, 50), 0, 50, 0.05f, 0.5f);
+                
+            Vector3 velocity = Vector3.MoveTowards(docker.position, hoverPos, MaxSpeed * speedMultiplier * Time.deltaTime) - docker.position;
+            transform.position += velocity;
+                
+            distToHoverPoint = Vector3.Distance(docker.position, hoverPos);
+            yield return null;
+        }
+        
+        SetFlightState(FlightState.InFlight);
+        yield break;
+    }
+    
+    public void CancelDocking ()
+    {
+        SetFlightState(FlightState.InFlight);
+    }
+
+#endregion
     void UpdateLog()
     {
         string log = $"<b>Ship - {data.displayName}</b>\n";
-        log += $"# Anchors: {Anchors.Length}";
+        log += $"# Anchors: {Anchors.Length}\n";
+        log += $"Add flight stats here!";
         DLog.Instance.AddOrUpdate(this, log);
     }
     
@@ -64,4 +406,14 @@ public class Ship : MonoBehaviour
         Anchors = GetComponentsInChildren<ShipComponentAnchor>();
     }
 #endif
+    
+    public float Remap(float value, float from1, float to1, float from2, float to2) 
+    { 
+        return (value - from1) / (to1 - from1) * (to2 - from2) + from2; 
+    } 
+
+    public float Remap01(float value, float from, float to) 
+    { 
+        return (value - from) / (to - from); 
+    }
 }

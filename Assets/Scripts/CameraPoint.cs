@@ -15,8 +15,9 @@ public class CameraPoint : MonoBehaviour
     public float rotationSpeed;
     public virtual void TransformCamera(Transform cam)
     {
-        float currentSpeed = Mathf.Abs(FlightController.Instance.Speed);
-        float maxSpeed = FlightController.Instance.MaxSpeed;
+        Ship ship = Player.Instance.currentShip;
+        float currentSpeed = Mathf.Abs(ship.Speed);
+        float maxSpeed = ship.MaxSpeed;
         float r = currentSpeed / maxSpeed;
         cam.position = Vector3.Lerp(cam.position, transform.position, Mathf.Lerp(baseMovementSpeed, maxMovementSpeed, r) * Time.deltaTime);
         cam.rotation = Quaternion.Lerp(cam.rotation, transform.rotation, rotationSpeed * Time.deltaTime);

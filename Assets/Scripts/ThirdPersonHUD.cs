@@ -10,6 +10,7 @@ public class ThirdPersonHUD : BaseHUD
     [Header("Third Person")]
     public Canvas canvas;
     public Image crossHair;
+    public Image predictiveCrosshair;
     private TargetController targeting;
     private CameraController cameraControl;
 
@@ -30,6 +31,7 @@ public class ThirdPersonHUD : BaseHUD
         base.Deactivate();
         canvas.gameObject.SetActive(false);
         crossHair.gameObject.SetActive(false);
+        predictiveCrosshair.gameObject.SetActive(false);
     }
 
     public override void UpdateHUD()
@@ -56,8 +58,17 @@ public class ThirdPersonHUD : BaseHUD
         {
             crossHair.gameObject.SetActive(false);
         }
+        
+        if (!predictiveCrosshair.gameObject.activeSelf && state == TargetController.TargetState.TargetLocked)
+        {
+            predictiveCrosshair.gameObject.SetActive(true);
+        } else if (state != TargetController.TargetState.TargetLocked && predictiveCrosshair.gameObject.activeSelf)
+        {
+            predictiveCrosshair.gameObject.SetActive(false);
+        }
 
         Vector2 screenPos = Vector2.zero;
+        Vector2 predictiveScreenPos = Vector2.zero;
         switch (state)
         {
             case TargetController.TargetState.NoTarget:
@@ -71,11 +82,15 @@ public class ThirdPersonHUD : BaseHUD
                 break;
             case TargetController.TargetState.TargetLocked:
                 screenPos = cameraControl.mainCam.WorldToViewportPoint(currentTarget.Position());
+                int predictionFrames = Mathf.FloorToInt(Vector3.Distance(transform.position, targeting.trackedTarget.Item1.Position()) / 100);
+                predictiveScreenPos =
+                    cameraControl.mainCam.WorldToViewportPoint(targeting.TargetPredictedPosition(1));
                 crossHair.color = targetLockedColor;
                 break;
         }
         crossHair.rectTransform.anchorMin = screenPos;
         crossHair.rectTransform.anchorMax = screenPos;
-        
+        predictiveCrosshair.rectTransform.anchorMin = predictiveScreenPos;
+        predictiveCrosshair.rectTransform.anchorMax = predictiveScreenPos;
     }
 }
