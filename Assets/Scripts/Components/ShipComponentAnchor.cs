@@ -9,6 +9,8 @@ public class ShipComponentAnchor : MonoBehaviour
     public ShipComponent component;
     public ShipComponent.Tag[] compatibleWith;
 
+    [HideInInspector] public Ship ship;
+    
     public delegate void OnComponentAttached(ShipComponent component);
     public OnComponentAttached onComponentAttached;
     

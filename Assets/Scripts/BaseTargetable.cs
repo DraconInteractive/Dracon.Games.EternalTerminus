@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BaseTargetable : MonoBehaviour
 {
+    public static List<BaseTargetable> All = new List<BaseTargetable>();
     protected ContextAction[] actions;
     public Vector3 velocity;
     public virtual string ID()
@@ -28,12 +29,12 @@ public class BaseTargetable : MonoBehaviour
 
     public virtual void Register()
     {
-        TargetController.AllTargets.Add(this);
+        All.Add(this);
     }
 
     public virtual void Deregister()
     {
-        TargetController.AllTargets.Remove(this);
+        All.Remove(this);
     }
 
     public ContextAction[] GetContextActions()

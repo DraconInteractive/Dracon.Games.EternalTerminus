@@ -50,7 +50,7 @@ public class UI_ContextMenu : MonoBehaviour
         }
         _menuItems.Clear();
         
-        BaseTargetable target = TargetController.Instance.trackedTarget.Item1;
+        BaseTargetable target = Player.Instance.currentShip.trackedTarget.Item1;
         if (target == null)
         {
             // Show only default options? 

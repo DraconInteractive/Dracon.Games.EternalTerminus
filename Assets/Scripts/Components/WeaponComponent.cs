@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using Sirenix.OdinInspector;
 public class WeaponComponent : ShipComponent
@@ -11,12 +8,9 @@ public class WeaponComponent : ShipComponent
     [ReadOnly]
     public float currentCooldown;
     public Transform firePoint;
-
-    private TargetController targetControl;
-
+    
     private void Start()
     {
-        targetControl = TargetController.Instance;
         aim.Setup(this);
     }
 
@@ -26,7 +20,7 @@ public class WeaponComponent : ShipComponent
         {
             currentCooldown -= Time.deltaTime;
         }
-        aim.UpdateAim(targetControl.trackedTarget.Item1, targetControl.state);
+        aim.UpdateAim(_anchor.ship.trackedTarget.Item1, _anchor.ship.targetingState);
     }
 
     private Coroutine inputDownRoutine;

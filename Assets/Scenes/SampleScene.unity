@@ -133,12 +133,10 @@ GameObject:
   m_Component:
   - component: {fileID: 35408764}
   - component: {fileID: 35408765}
-  - component: {fileID: 35408763}
-  - component: {fileID: 35408767}
   - component: {fileID: 35408768}
   - component: {fileID: 35408769}
+  - component: {fileID: 35408771}
   - component: {fileID: 35408766}
-  - component: {fileID: 35408770}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -146,182 +144,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &35408763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 35408762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 461ac94f2eaca5c4187379e9aa5732d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  throttleAction:
-    m_Name: Throttle
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: eb273495-ba1e-4184-a4e9-e80bd4863aaf
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 5a303d9a-3363-4342-b69e-90f0e35c633f
-      m_Path: <HID::Logitech Extreme 3D pro>/slider
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Throttle
-      m_Flags: 0
-    - m_Name: Keyboard
-      m_Id: 3a86743e-c181-4a51-835a-b87e8e7684fb
-      m_Path: 1DAxis
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Throttle
-      m_Flags: 4
-    - m_Name: negative
-      m_Id: 09413bcc-c89b-47ed-a6b8-6ca564308212
-      m_Path: <Keyboard>/w
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Throttle
-      m_Flags: 8
-    - m_Name: positive
-      m_Id: 33ddfc26-77db-45b3-b8a6-b06e7c0c63f1
-      m_Path: <Keyboard>/s
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Throttle
-      m_Flags: 8
-    m_Flags: 0
-  pitchAction:
-    m_Name: Pitch
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: a0851f2c-1c80-4d1f-bdd1-d797b017aec5
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 5de65304-84eb-4751-9d1c-81f14db3324b
-      m_Path: <Joystick>/stick/y
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Pitch
-      m_Flags: 0
-    - m_Name: Keyboard
-      m_Id: 3d54f2bc-4b55-4eb6-8841-f3db79817698
-      m_Path: 1DAxis
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Pitch
-      m_Flags: 4
-    - m_Name: negative
-      m_Id: 750fdd17-e6cd-41ab-8e26-473af45e809e
-      m_Path: <Keyboard>/downArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Pitch
-      m_Flags: 8
-    - m_Name: positive
-      m_Id: 74b73a10-6d1a-40d4-898e-4579390ca960
-      m_Path: <Keyboard>/upArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Pitch
-      m_Flags: 8
-    m_Flags: 0
-  rollAction:
-    m_Name: Roll
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 086efe45-0bfb-4b43-a295-4135be0f550c
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 2eefd5b0-4b10-4e49-95b4-192bbf42d5d5
-      m_Path: <Joystick>/stick/x
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Roll
-      m_Flags: 0
-    - m_Name: Keyboard
-      m_Id: 75030ee8-f67d-4849-9dc8-f00f53c89265
-      m_Path: 1DAxis
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Roll
-      m_Flags: 4
-    - m_Name: negative
-      m_Id: aacc602f-bb28-4395-baaf-7ac468a6acaa
-      m_Path: <Keyboard>/leftArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Roll
-      m_Flags: 8
-    - m_Name: positive
-      m_Id: 7f5560d5-85b2-4dd3-86f0-591ea3df15a9
-      m_Path: <Keyboard>/rightArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Roll
-      m_Flags: 8
-    m_Flags: 0
-  yawAction:
-    m_Name: Yaw
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 3b8a7ab1-05ab-4cdf-b5d0-45e0493880e5
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 78717906-6ebb-45ff-ae6c-0602e7a4c3d8
-      m_Path: <HID::Logitech Extreme 3D pro>/rz
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Yaw
-      m_Flags: 0
-    - m_Name: Keyboard
-      m_Id: 25d30b73-4b28-4955-8c86-407fb4a7668f
-      m_Path: 1DAxis
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Yaw
-      m_Flags: 4
-    - m_Name: negative
-      m_Id: c70bc449-2e89-4858-94c2-2fc492999086
-      m_Path: <Keyboard>/q
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Yaw
-      m_Flags: 8
-    - m_Name: positive
-      m_Id: 90964ae4-03d2-44f3-8fce-0db3c0e09fab
-      m_Path: <Keyboard>/e
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Yaw
-      m_Flags: 8
-    m_Flags: 0
 --- !u!4 &35408764
 Transform:
   m_ObjectHideFlags: 0
@@ -353,9 +175,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentShip: {fileID: 1080310203}
-  flightController: {fileID: 35408763}
-  weaponController: {fileID: 35408767}
-  TargetController: {fileID: 35408770}
   cameraController: {fileID: 35408768}
   inputController: {fileID: 35408769}
 --- !u!114 &35408766
@@ -372,20 +191,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 1
   text: {fileID: 287384680}
---- !u!114 &35408767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 35408762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aac4b20f09c992943bb9a49ff1d50902, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  primaryWeapons: []
-  secondaryWeapons: []
 --- !u!114 &35408768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,8 +504,84 @@ MonoBehaviour:
         m_Flags: 0
       m_Flags: 0
     supportedContexts: 02000000
+  - ID: Throttle
+    action:
+      m_Name: Action
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 7428ec0b-65b1-4af6-bddb-659a9d23c2dd
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: eb4256b4-f96b-4bc3-8de8-3daff9b81056
+        m_Path: <HID::Logitech Extreme 3D pro>/slider
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Action
+        m_Flags: 0
+      m_Flags: 0
+    supportedContexts: 01000000
+  - ID: Pitch
+    action:
+      m_Name: Action
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 498a88f5-e79b-45bf-a852-7232920aa1ea
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 0d15fe55-e78e-48a7-bd97-ec37172f9cd8
+        m_Path: <Joystick>/stick/y
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Action
+        m_Flags: 0
+      m_Flags: 0
+    supportedContexts: 01000000
+  - ID: Roll
+    action:
+      m_Name: Action
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 2473c5dc-fe9e-4b84-bdf7-7af5f7b42659
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 94a5fc0f-9a78-42c7-8c92-aef59f81e353
+        m_Path: <Joystick>/stick/x
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Action
+        m_Flags: 0
+      m_Flags: 0
+    supportedContexts: 01000000
+  - ID: Yaw
+    action:
+      m_Name: Action
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: da6511c0-fe5f-47c6-a2e5-95f7643bc777
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 09fa2bbc-8558-4402-9688-45231b848c01
+        m_Path: <HID::Logitech Extreme 3D pro>/rz
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Action
+        m_Flags: 0
+      m_Flags: 0
+    supportedContexts: 01000000
   currentContext: 1
---- !u!114 &35408770
+--- !u!114 &35408771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -709,11 +590,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 35408762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b943ead0240b97e40832bf4f398ccf49, type: 3}
+  m_Script: {fileID: 11500000, guid: 52e631a221df2b34fb297a1c497889ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scanRange: 1000
-  state: 0
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: items
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Item, Assembly-CSharp],[System.Int32,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.ObjectEqualityComparer`1[[Item, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  limitedCapacity: 0
+  capacity: 0
 --- !u!1 &76478332
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,14 +759,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 106368691}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -50, y: 12, z: -54}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -32.7, y: 8, z: -153.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 378075277}
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_Father: {fileID: 2135887868}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &106368694
 Rigidbody:
@@ -5795,6 +5705,53 @@ Transform:
   m_Father: {fileID: 35408764}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &161920148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 161920149}
+  - component: {fileID: 161920150}
+  m_Layer: 0
+  m_Name: Utility
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &161920149
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161920148}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1513157593}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &161920150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161920148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d3fe7bc20785d4c95f20b83e21856e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actions:
+  - {fileID: 0}
+  entropyRange: {x: 0, y: 0}
 --- !u!1 &170317188
 GameObject:
   m_ObjectHideFlags: 0
@@ -5842,6 +5799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 3566499067809199602}
   compatibleWith: 04000000
+  ship: {fileID: 0}
 --- !u!1 &184423720
 GameObject:
   m_ObjectHideFlags: 0
@@ -6686,6 +6644,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 3124839052935728800}
   compatibleWith: 04000000
+  ship: {fileID: 0}
 --- !u!1 &424135099
 GameObject:
   m_ObjectHideFlags: 0
@@ -7413,14 +7372,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 972862002}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.3, y: 4, z: 99.2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1232697796}
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_Father: {fileID: 2135887868}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &972862005
 Rigidbody:
@@ -7643,6 +7602,7 @@ GameObject:
   - component: {fileID: 1080310202}
   - component: {fileID: 1080310203}
   - component: {fileID: 1080310204}
+  - component: {fileID: 1080310205}
   m_Layer: 6
   m_Name: Test Ship 02
   m_TagString: Untagged
@@ -7679,7 +7639,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af744f4002d91d943b41f4de47785a0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerControlled: 0
+  controller: {fileID: 0}
+  controlledByPlayer: 0
   data: {fileID: 11400000, guid: 628ecbae4ffcec942a34c35be97188eb, type: 2}
   Anchors:
   - {fileID: 1151725737}
@@ -7704,6 +7665,11 @@ MonoBehaviour:
   PitchIn: 0
   YawIn: 0
   RollIn: 0
+  primaryWeapons: []
+  secondaryWeapons: []
+  scanRange: 1000
+  trackingTargets: 0
+  targetingState: 0
 --- !u!54 &1080310204
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7720,6 +7686,49 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1080310205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080310201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e631a221df2b34fb297a1c497889ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: items
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Item, Assembly-CSharp],[System.Int32,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.ObjectEqualityComparer`1[[Item, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  limitedCapacity: 0
+  capacity: 0
 --- !u!1 &1099814828
 GameObject:
   m_ObjectHideFlags: 0
@@ -8030,6 +8039,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 2350483255049423400}
   compatibleWith: 03000000
+  ship: {fileID: 0}
 --- !u!1 &1160489750
 GameObject:
   m_ObjectHideFlags: 0
@@ -8410,14 +8420,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1372250428}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 120, y: -20, z: 150}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 137.3, y: -24, z: 50.800003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1160489751}
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_Father: {fileID: 2135887868}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1372250431
 Rigidbody:
@@ -8482,6 +8492,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 3121935632072067677}
   compatibleWith: 0000000005000000
+  ship: {fileID: 0}
 --- !u!1 &1384589899
 GameObject:
   m_ObjectHideFlags: 0
@@ -8626,6 +8637,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 4466362983275952224}
   compatibleWith: 0000000006000000
+  ship: {fileID: 0}
 --- !u!1 &1493220500
 GameObject:
   m_ObjectHideFlags: 0
@@ -8657,6 +8669,38 @@ Transform:
   m_Father: {fileID: 4466362983275952223}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -1, y: 0, z: 0}
+--- !u!1 &1513157592
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1513157593}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1513157593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513157592}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 161920149}
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1528351126
 GameObject:
   m_ObjectHideFlags: 0
@@ -8695,14 +8739,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528351126}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: -10, z: 50}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 37.3, y: -14, z: -49.199997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 770706715}
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 2135887868}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1528351129
 Rigidbody:
@@ -9130,6 +9174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 110443861}
   compatibleWith: 08000000
+  ship: {fileID: 0}
 --- !u!1 &1648786068
 GameObject:
   m_ObjectHideFlags: 0
@@ -9369,7 +9414,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1694199186
 GameObject:
@@ -9754,6 +9799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 3058585693111633519}
   compatibleWith: 0000000005000000
+  ship: {fileID: 0}
 --- !u!1 &1954435637
 GameObject:
   m_ObjectHideFlags: 0
@@ -9787,7 +9833,7 @@ Transform:
   - {fileID: 264090428}
   - {fileID: 261252260}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -43.98, y: 110.783, z: -18.837}
 --- !u!114 &1954435639
 MonoBehaviour:
@@ -10050,6 +10096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   component: {fileID: 2728994521747943347}
   compatibleWith: 0000000006000000
+  ship: {fileID: 0}
 --- !u!1 &2110032506
 GameObject:
   m_ObjectHideFlags: 0
@@ -10081,6 +10128,41 @@ Transform:
   m_Father: {fileID: 2726003504121590924}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -1, y: 0, z: 0}
+--- !u!1 &2135887867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2135887868}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2135887868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135887867}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.3, y: 4, z: 99.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1528351128}
+  - {fileID: 1372250430}
+  - {fileID: 106368693}
+  - {fileID: 972862004}
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1578558241815422
 GameObject:
   m_ObjectHideFlags: 0

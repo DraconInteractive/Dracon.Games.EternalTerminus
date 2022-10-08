@@ -18,15 +18,17 @@ public class ShipComponent : MonoBehaviour
     }
 
     public Tag[] tags;
-    
+
+    protected ShipComponentAnchor _anchor;
+
     public virtual void OnAttached (ShipComponentAnchor anchor)
     {
-        
+        _anchor = anchor;
     }
 
     public virtual void OnRemoved (ShipComponentAnchor anchor)
     {
-        
+        _anchor = null;
     }
     
     

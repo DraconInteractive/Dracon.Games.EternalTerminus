@@ -9,9 +9,6 @@ using Cursor = UnityEngine.Cursor;
 public class Player : Manager<Player>
 {
     public Ship currentShip;
-    public FlightController flightController;
-    public WeaponController weaponController;
-    public TargetController TargetController;
     public CameraController cameraController;
     public InputController inputController;
     
@@ -28,7 +25,6 @@ public class Player : Manager<Player>
         {
             SetShip(currentShip);
         }
-        flightController.Setup();
     }
 
     public void ToggleCursor()
@@ -52,7 +48,6 @@ public class Player : Manager<Player>
         currentShip = newShip;
         currentShip.Possess();
         //Add remove ship to cleanup hooks
-        weaponController.SetShip(newShip);
         cameraController.SetShip(newShip);
         UpdateLog();
     }

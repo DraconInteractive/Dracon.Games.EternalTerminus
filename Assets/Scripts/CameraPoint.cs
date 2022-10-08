@@ -13,6 +13,7 @@ public class CameraPoint : MonoBehaviour
     public float baseMovementSpeed = 1;
     public float maxMovementSpeed = 10;
     public float rotationSpeed;
+    
     public virtual void TransformCamera(Transform cam)
     {
         Ship ship = Player.Instance.currentShip;

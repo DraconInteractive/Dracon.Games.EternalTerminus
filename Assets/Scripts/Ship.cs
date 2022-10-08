@@ -8,7 +8,8 @@ using Sirenix.Serialization;
 
 public class Ship : MonoBehaviour
 {
-    public bool playerControlled;
+    public BaseShipController controller;
+    public bool controlledByPlayer;
     
     public ShipData data;
     public ShipComponentAnchor[] Anchors;
@@ -17,6 +18,7 @@ public class Ship : MonoBehaviour
     private Transform cachedTransform;
     private Rigidbody rb;
     
+    #region Flight Variables
     public enum FlightState
     {
         Fixed,
@@ -25,8 +27,7 @@ public class Ship : MonoBehaviour
         Docked,
         InFlight
     }
-
-    #region Flight Variables
+    
     [FoldoutGroup("Flight")]
     public FlightState flightState;
     private float currentSpeed;
@@ -97,9 +98,40 @@ public class Ship : MonoBehaviour
     [FoldoutGroup("Flight/Input"), ReadOnly]
     public float ThrottleIn, PitchIn, YawIn, RollIn;
     #endregion
-    
+
+    #region Weapon Variables
+
+    [FoldoutGroup("Weapons"), ReadOnly]
+    public WeaponComponent[] primaryWeapons;
+    [FoldoutGroup("Weapons"), ReadOnly]
+    public WeaponComponent[] secondaryWeapons;
+
+    #endregion
+
+    #region Targeting Variables
+    public enum TargetState
+    {
+        TrackingInactive,
+        NoTarget,
+        TargetAcquired,
+        TargetLocked
+    };
+    // Add scan controller and scanner component. 
+    // scanner controller controls all target listings and aquisition
+    // this is temp
+    [FoldoutGroup("Targeting")]
+    public float scanRange;
+    [FoldoutGroup("Targeting"), ReadOnly]
+    public bool trackingTargets;
+    public (BaseTargetable, float) trackedTarget;
+    [FoldoutGroup("Targeting"), ReadOnly]
+    public TargetState targetingState;
+
+    #endregion
     public delegate void OnAttachComponent(ShipComponentAnchor anchor, ShipComponent component);
     public OnAttachComponent onAttachComponent;
+
+    #region Core
 
     private void Awake()
     {
@@ -115,7 +147,7 @@ public class Ship : MonoBehaviour
 
     private void Update()
     {
-        
+        TargetingUpdate();
     }
 
     private void FixedUpdate()
@@ -134,14 +166,38 @@ public class Ship : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (UnityEditor.EditorApplication.isPlaying)
+        {
+            Gizmos.DrawWireSphere(transform.position, MaxWeaponRange());
+        }
+    }
+#endif
+    #endregion
+    
     public void Possess()
     {
-        playerControlled = true;
+        SetController<ShipController_Player>();
+        controlledByPlayer = true;
     }
 
     public void Release()
     {
-        playerControlled = false;
+        SetController<ShipController_AI>();
+        controlledByPlayer = false;
+    }
+
+    public void SetController<T>() where T : BaseShipController
+    {
+        if (controller != null)
+        {
+            controller.Deinitialize();
+        }
+
+        controller = gameObject.AddComponent<T>();
+        controller.Initialize(this);
     }
     
     void SetupFlight()
@@ -162,13 +218,17 @@ public class Ship : MonoBehaviour
             ShipComponentAnchor tempAnchor = anchor;
             anchor.onComponentAttached += c => onAttachComponent(tempAnchor, c);
             anchor.onComponentAttached += ComponentAttachedHandler;
+            anchor.ship = this;
             if (anchor.component != null)
             {
-                tempAnchor.onComponentAttached?.Invoke(tempAnchor.component);
+                //tempAnchor.onComponentAttached?.Invoke(tempAnchor.component);
+                tempAnchor.AttachComponent(tempAnchor.component);
             }
         }
         UpdateLog();
     }
+
+    #region Components
 
     void ComponentAttachedHandler(ShipComponent component)
     {
@@ -180,9 +240,12 @@ public class Ship : MonoBehaviour
         {
             dockingComponent = component;
         }
+        else if (component is WeaponComponent)
+        {
+            AssessWeapons();
+        }
     }
 
-    [Button]
     public void AssessEngines()
     {
         var engines = GetComponentsOfType<EngineComponent>();
@@ -202,6 +265,13 @@ public class Ship : MonoBehaviour
         }
     }
 
+    public void AssessWeapons()
+    {
+        var weapons = Player.Instance.currentShip.GetComponentsOfType<WeaponComponent>();
+        primaryWeapons = weapons.Where(x => x.tags.Contains(ShipComponent.Tag.Primary)).ToArray();
+        secondaryWeapons = weapons.Where(x => x.tags.Contains(ShipComponent.Tag.Secondary)).ToArray();
+    }
+    
     public List<T> GetComponentsOfType<T>() where T : ShipComponent
     {
         List<T> temp = new List<T>();
@@ -216,7 +286,9 @@ public class Ship : MonoBehaviour
         return temp;
     }
 
-#region Flight
+    #endregion
+    
+    #region Flight
 
     void FlightTick()
     {
@@ -249,7 +321,7 @@ public class Ship : MonoBehaviour
         }
 
         flightState = newState;
-        if (playerControlled)
+        if (controlledByPlayer)
             InputController.Instance.AssessContext();
     }
     
@@ -390,7 +462,201 @@ public class Ship : MonoBehaviour
         SetFlightState(FlightState.InFlight);
     }
 
-#endregion
+    #endregion
+
+    #region Weapons
+
+    public float MaxWeaponRange()
+    {
+        float max = 0;
+        foreach (var weapon in primaryWeapons)
+        {
+            if (weapon.data.range > max)
+            {
+                max = weapon.data.range;
+            }
+        }
+        foreach (var weapon in secondaryWeapons)
+        {
+            if (weapon.data.range > max)
+            {
+                max = weapon.data.range;
+            }
+        }
+
+        return max;
+    }
+
+    public float MinWeaponDot()
+    {
+        float min = 0;
+        foreach (var weapon in primaryWeapons)
+        {
+            if (weapon.data.trackingFOV < min)
+            {
+                min = weapon.data.trackingFOV;
+            }
+        }
+        foreach (var weapon in secondaryWeapons)
+        {
+            if (weapon.data.trackingFOV < min)
+            {
+                min = weapon.data.trackingFOV;
+            }
+        }
+
+        return min;
+    }
+
+    public void FirePrimary()
+    {
+        foreach (var weaponComponent in primaryWeapons)
+        {
+            weaponComponent.TryFire();
+        }
+    }
+    
+    public void StartFire_Primary()
+    {
+        foreach (var weaponComponent in primaryWeapons)
+        {
+            weaponComponent.OnInputRelease();
+        }
+    }
+
+    public void EndFire_Primary()
+    {
+        foreach (var weaponComponent in primaryWeapons)
+        {
+            weaponComponent.OnInputRelease();
+        }
+    }
+
+    public void FireSecondary()
+    {
+        foreach (var weaponComponent in secondaryWeapons)
+        {
+            weaponComponent.TryFire();
+        }
+    }
+    
+    public void StartFire_Secondary()
+    {
+        foreach (var weaponComponent in secondaryWeapons)
+        {
+            weaponComponent.OnInputRelease();
+        }
+    }
+
+    public void EndFire_Secondary()
+    {
+        foreach (var weaponComponent in secondaryWeapons)
+        {
+            weaponComponent.OnInputRelease();
+        }
+    }
+    
+    #endregion
+
+    #region Targeting
+
+    private void TargetingUpdate()
+    {
+        if (!trackingTargets)
+        {
+            targetingState = TargetState.TrackingInactive;
+            return;
+        }
+        
+        if (trackedTarget.Item1 != null)
+        {
+            Vector3 targetDir = trackedTarget.Item1.Position() - transform.position;
+            float dot = Vector3.Dot(transform.forward, targetDir.normalized);
+            float currentTrackingLevel = trackedTarget.Item2;
+            if (dot > MinWeaponDot() && Vector3.Distance(transform.position, trackedTarget.Item1.Position()) < MaxWeaponRange())
+            {
+                currentTrackingLevel += Time.deltaTime;
+            }
+            else
+            {
+                currentTrackingLevel -= Time.deltaTime;
+            }
+            trackedTarget.Item2 = Mathf.Clamp01(currentTrackingLevel);
+
+            if (currentTrackingLevel >= 1)
+            {
+                targetingState = TargetState.TargetLocked;
+            }
+            else
+            {
+                targetingState = TargetState.TargetAcquired;
+            }
+        }
+        else
+        {
+            targetingState = TargetState.NoTarget;
+        }
+    }
+    
+    public void ToggleTargetTracking()
+    {
+        trackingTargets = !trackingTargets;
+        trackedTarget = (null, 0);
+    }
+
+    public enum FindTargetMethod
+    {
+        Forward,
+        Closest
+    }
+    
+    public void FindTarget(FindTargetMethod method)
+    {
+        Debug.Log("Finding target, method: " + method);
+        if (!trackingTargets)
+        {
+            Debug.Log("Not tracking");
+            trackedTarget = (null, 0);
+            return;
+        }
+
+        BaseTargetable tempTarget = null;
+        var viableTargets = BaseTargetable.All
+            .Where(x => Vector3.Distance(x.Position(), transform.position) < scanRange);
+        
+        if (method == FindTargetMethod.Closest)
+        {
+            float maxRange = scanRange;
+            Vector3 pos = transform.position;
+            foreach (var target in viableTargets)
+            {
+                float dist = Vector3.Distance(target.Position(), pos);
+                if (dist < maxRange)
+                {
+                    maxRange = dist;
+                    tempTarget = target;
+                }
+            }
+        }
+        else if (method == FindTargetMethod.Forward)
+        {
+            float minDot = 0;
+            
+            foreach (var target in viableTargets)
+            {
+                Vector3 dir = target.Position() - transform.position;
+                float dot = Vector3.Dot(transform.forward, dir.normalized);
+                if (dot > minDot)
+                {
+                    minDot = dot;
+                    tempTarget = target;
+                }
+            }
+        }
+        trackedTarget = (tempTarget, 0);
+    }
+
+    #endregion
     void UpdateLog()
     {
         string log = $"<b>Ship - {data.displayName}</b>\n";
@@ -398,7 +664,9 @@ public class Ship : MonoBehaviour
         log += $"Add flight stats here!";
         DLog.Instance.AddOrUpdate(this, log);
     }
-    
+
+    #region Tools
+
 #if UNITY_EDITOR
     [ContextMenu("Find Anchors")]
     public void EDITOR_FindChildAnchors()
@@ -416,4 +684,7 @@ public class Ship : MonoBehaviour
     { 
         return (value - from) / (to - from); 
     }
+
+    #endregion
+
 }

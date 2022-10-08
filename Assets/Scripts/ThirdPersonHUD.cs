@@ -1,17 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ThirdPersonHUD : BaseHUD
 {
+    private Ship _ship;
+    
     [Header("Third Person")]
     public Canvas canvas;
     public Image crossHair;
     public Image predictiveCrosshair;
-    private TargetController targeting;
     private CameraController cameraControl;
 
     public Color noTargetColor, targetAcquiredColor, targetLockedColor;
@@ -22,8 +19,8 @@ public class ThirdPersonHUD : BaseHUD
     {
         base.Activate();
         cameraControl = Player.Instance.cameraController;
-        targeting = Player.Instance.TargetController;
         canvas.gameObject.SetActive(true);
+        _ship = Player.Instance.currentShip;
     }
 
     public override void Deactivate()
@@ -38,10 +35,10 @@ public class ThirdPersonHUD : BaseHUD
     {
         base.UpdateHUD();
 
-        var state = targeting.state;
-        var currentTarget = targeting.trackedTarget.Item1;
+        var state = _ship.targetingState;
+        var currentTarget = _ship.trackedTarget.Item1;
         
-        if (state == TargetController.TargetState.TrackingInactive)
+        if (state == Ship.TargetState.TrackingInactive)
         {
             showCrosshair = false;
         }
@@ -59,10 +56,10 @@ public class ThirdPersonHUD : BaseHUD
             crossHair.gameObject.SetActive(false);
         }
         
-        if (!predictiveCrosshair.gameObject.activeSelf && state == TargetController.TargetState.TargetLocked)
+        if (!predictiveCrosshair.gameObject.activeSelf && state == Ship.TargetState.TargetLocked)
         {
             predictiveCrosshair.gameObject.SetActive(true);
-        } else if (state != TargetController.TargetState.TargetLocked && predictiveCrosshair.gameObject.activeSelf)
+        } else if (state != Ship.TargetState.TargetLocked && predictiveCrosshair.gameObject.activeSelf)
         {
             predictiveCrosshair.gameObject.SetActive(false);
         }
@@ -71,20 +68,20 @@ public class ThirdPersonHUD : BaseHUD
         Vector2 predictiveScreenPos = Vector2.zero;
         switch (state)
         {
-            case TargetController.TargetState.NoTarget:
+            case Ship.TargetState.NoTarget:
                 Transform camT = cameraControl.mainCam.transform;
                 screenPos = cameraControl.mainCam.WorldToViewportPoint(camT.position + camT.forward * 10);
                 crossHair.color = noTargetColor;
                 break;
-            case TargetController.TargetState.TargetAcquired:
+            case Ship.TargetState.TargetAcquired:
                 screenPos = cameraControl.mainCam.WorldToViewportPoint(currentTarget.Position());
                 crossHair.color = targetAcquiredColor;
                 break;
-            case TargetController.TargetState.TargetLocked:
+            case Ship.TargetState.TargetLocked:
                 screenPos = cameraControl.mainCam.WorldToViewportPoint(currentTarget.Position());
-                int predictionFrames = Mathf.FloorToInt(Vector3.Distance(transform.position, targeting.trackedTarget.Item1.Position()) / 100);
+                int predictionFrames = Mathf.FloorToInt(Vector3.Distance(transform.position, currentTarget.Position()) / 100);
                 predictiveScreenPos =
-                    cameraControl.mainCam.WorldToViewportPoint(targeting.TargetPredictedPosition(1));
+                    cameraControl.mainCam.WorldToViewportPoint(DraconTools.TargetPredictedPosition(currentTarget,1));
                 crossHair.color = targetLockedColor;
                 break;
         }
