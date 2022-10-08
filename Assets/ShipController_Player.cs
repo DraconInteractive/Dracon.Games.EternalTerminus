@@ -17,13 +17,13 @@ public class ShipController_Player : BaseShipController
     
     private void Update()
     {
-        _ship.ThrottleIn = throttleAction.ReadValue<float>();
+        _ship.ThrottleIn = throttleAction.ReadValue<float>() * -1;
         _ship.PitchIn = pitchAction.ReadValue<float>();
         _ship.RollIn = rollAction.ReadValue<float>();
         _ship.YawIn = yawAction.ReadValue<float>();
     }
 
-    public override void Initialize(Ship ship)
+    public override void Initialize(Ship ship, params object[] data)
     {
         base.Initialize(ship);
         _player = Player.Instance;
@@ -56,7 +56,7 @@ public class ShipController_Player : BaseShipController
         inputController.FromID("Secondary Fire").inputEvent += SecondaryFireHandler;
 
         throttleAction = inputController.FromID("Throttle").action;
-        pitchAction = inputController.FromID("Throttle").action;
+        pitchAction = inputController.FromID("Pitch").action;
         rollAction = inputController.FromID("Roll").action;
         yawAction = inputController.FromID("Yaw").action;
     }

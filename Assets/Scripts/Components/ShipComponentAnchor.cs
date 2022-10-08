@@ -11,7 +11,7 @@ public class ShipComponentAnchor : MonoBehaviour
 
     [HideInInspector] public Ship ship;
     
-    public delegate void OnComponentAttached(ShipComponent component);
+    public delegate void OnComponentAttached(ShipComponentAnchor anchor, ShipComponent component);
     public OnComponentAttached onComponentAttached;
     
     public delegate void OnComponentRemoved(ShipComponent component);
@@ -36,7 +36,7 @@ public class ShipComponentAnchor : MonoBehaviour
         component = newComponent;
         
         component.OnAttached(this);
-        onComponentAttached?.Invoke(component);
+        onComponentAttached?.Invoke(this, component);
     }
 
     public void RemoveComponent()

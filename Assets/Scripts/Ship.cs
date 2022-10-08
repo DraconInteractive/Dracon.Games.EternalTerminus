@@ -69,8 +69,9 @@ public class Ship : MonoBehaviour
     {
         get
         {
-            // change from -1 - 1 to 0 - 1
-            float throttle = ThrottleIn * -1 * 0.5f;
+            // Input: 0->1
+            // Output: -1 -> 1
+            float throttle = ThrottleIn * 0.5f;
             throttle += 0.5f;
             return throttle;
         }
@@ -129,7 +130,7 @@ public class Ship : MonoBehaviour
 
     #endregion
     public delegate void OnAttachComponent(ShipComponentAnchor anchor, ShipComponent component);
-    public OnAttachComponent onAttachComponent;
+    public OnAttachComponent onComponentAttached;
 
     #region Core
 
@@ -216,7 +217,6 @@ public class Ship : MonoBehaviour
         foreach (var anchor in Anchors)
         {
             ShipComponentAnchor tempAnchor = anchor;
-            anchor.onComponentAttached += c => onAttachComponent(tempAnchor, c);
             anchor.onComponentAttached += ComponentAttachedHandler;
             anchor.ship = this;
             if (anchor.component != null)
@@ -230,7 +230,7 @@ public class Ship : MonoBehaviour
 
     #region Components
 
-    void ComponentAttachedHandler(ShipComponent component)
+    void ComponentAttachedHandler(ShipComponentAnchor anchor, ShipComponent component)
     {
         if (component is EngineComponent)
         {
@@ -244,6 +244,8 @@ public class Ship : MonoBehaviour
         {
             AssessWeapons();
         }
+        
+        onComponentAttached?.Invoke(anchor, component);
     }
 
     public void AssessEngines()

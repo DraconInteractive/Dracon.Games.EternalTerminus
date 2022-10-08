@@ -6,7 +6,7 @@ public class BaseShipController : MonoBehaviour
 {
     protected Ship _ship;
 
-    public virtual void Initialize(Ship ship)
+    public virtual void Initialize(Ship ship, params object[] data)
     {
         _ship = ship;
     }

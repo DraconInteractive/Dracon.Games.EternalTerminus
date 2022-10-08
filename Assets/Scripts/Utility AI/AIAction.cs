@@ -15,7 +15,7 @@ public abstract class AIAction : SerializedScriptableObject
     [MenuItem("Dracon/Create AI Actions")]
     public static void CreateActionArchetypes()
     {
-        string actionsPath = "Assets/Data/AIActions";
+        string actionsPath = "Assets/Data/AIActions/";
 
         List<System.Type> actionClasses = typeof(AIAction)
             .Assembly.GetTypes()

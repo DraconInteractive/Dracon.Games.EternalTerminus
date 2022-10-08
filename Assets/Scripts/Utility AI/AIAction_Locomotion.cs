@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UtilityActions : Manager<UtilityActions>
+public abstract class AIAction_Locomotion : AIAction
 {
-    
 }

@@ -48,7 +48,7 @@ public class CameraController : MonoBehaviour
 
     public void SetShip(Ship ship)
     {
-        ship.onAttachComponent += CheckNewComponent;
+        ship.onComponentAttached += CheckNewComponent;
         CheckNewComponent(null, null);
         SetPoint(0);
     }
