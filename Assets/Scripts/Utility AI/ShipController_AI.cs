@@ -50,6 +50,7 @@ public class ShipController_AI : BaseShipController
 
     private void FixedUpdate()
     {
+        //_ship.ThrottleIn = 0.5f;
         if (Time.time - _locomotionTime >= _archetype.decisionPeriod)
         {
             _locomotionTime = Time.time + Random.Range(-_timeEntropy, _timeEntropy);

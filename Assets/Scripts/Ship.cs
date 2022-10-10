@@ -69,11 +69,12 @@ public class Ship : MonoBehaviour
     {
         get
         {
-            // Input: 0->1
-            // Output: -1 -> 1
-            float throttle = ThrottleIn * 0.5f;
-            throttle += 0.5f;
-            return throttle;
+            
+            if (Mathf.Abs(ThrottleIn) < throttleDeadzone)
+            {
+                return 0;
+            }
+            return ThrottleIn;
         }
     }
     [FoldoutGroup("Flight/Main"), SerializeField, ReadOnly]
@@ -83,14 +84,8 @@ public class Ship : MonoBehaviour
     {
         get
         {
-            float tSpeed = Mathf.Lerp(-MaxSpeed * 0.25f, MaxSpeed, Throttle);
-            // Deadzone
-            if (Mathf.Abs(tSpeed) < throttleDeadzone)
-            {
-                tSpeed = 0;
-            }
-
-            return tSpeed;
+            //float tSpeed = Mathf.Lerp(0, MaxSpeed, Throttle);
+            return MaxSpeed * Throttle;
         }
     }
     [FoldoutGroup("Flight/Rotation Speed"), SerializeField, ReadOnly]
@@ -248,6 +243,7 @@ public class Ship : MonoBehaviour
         onComponentAttached?.Invoke(anchor, component);
     }
 
+    [Button]
     public void AssessEngines()
     {
         var engines = GetComponentsOfType<EngineComponent>();
@@ -267,6 +263,7 @@ public class Ship : MonoBehaviour
         }
     }
 
+    [Button]
     public void AssessWeapons()
     {
         var weapons = Player.Instance.currentShip.GetComponentsOfType<WeaponComponent>();
