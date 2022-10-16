@@ -1,18 +1,28 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class ThirdPersonHUD : BaseHUD
 {
     private Ship _ship;
     
-    [Header("Third Person")]
+    [Space]
     public Canvas canvas;
+    
+    [Header("Crosshair")]
     public Image crossHair;
     public Image predictiveCrosshair;
-    private CameraController cameraControl;
-
+    public TMP_Text targetIDText;
+    [Space]
     public Color noTargetColor, targetAcquiredColor, targetLockedColor;
     
+    [Header("Speed Bar")]
+    public Image currentSpeedMarker, targetSpeedMarker;
+    public float markerDistance;
+    private Vector2 csMarkerPos, tsMarkerPos;
+    
+    private CameraController cameraControl;
     private bool showCrosshair;
     
     public override void Activate()
@@ -21,6 +31,7 @@ public class ThirdPersonHUD : BaseHUD
         cameraControl = Player.Instance.cameraController;
         canvas.gameObject.SetActive(true);
         _ship = Player.Instance.currentShip;
+        _ship.onTargetStateChange += OnTargetStateChange;
     }
 
     public override void Deactivate()
@@ -29,6 +40,12 @@ public class ThirdPersonHUD : BaseHUD
         canvas.gameObject.SetActive(false);
         crossHair.gameObject.SetActive(false);
         predictiveCrosshair.gameObject.SetActive(false);
+        
+        if (_ship != null)
+        {
+            _ship.onTargetStateChange -= OnTargetStateChange;
+        }
+        
     }
 
     public override void UpdateHUD()
@@ -38,6 +55,20 @@ public class ThirdPersonHUD : BaseHUD
         var state = _ship.targetingState;
         var currentTarget = _ship.trackedTarget.Item1;
         
+        UpdateCrosshairs(state, currentTarget);
+
+        var normalizedTargetSpeed = _ship.NormalizedTargetSpeed;
+        var normalizedSpeed = _ship.NormalizedSpeed;
+        
+        tsMarkerPos.x = normalizedTargetSpeed * markerDistance;
+        targetSpeedMarker.rectTransform.anchoredPosition = tsMarkerPos;
+
+        csMarkerPos.x = normalizedSpeed * markerDistance;
+        currentSpeedMarker.rectTransform.anchoredPosition = csMarkerPos;
+    }
+
+    void UpdateCrosshairs(Ship.TargetState state, Targetable currentTarget)
+    {
         if (state == Ship.TargetState.TrackingInactive)
         {
             showCrosshair = false;
@@ -85,9 +116,23 @@ public class ThirdPersonHUD : BaseHUD
                 crossHair.color = targetLockedColor;
                 break;
         }
+        
         crossHair.rectTransform.anchorMin = screenPos;
         crossHair.rectTransform.anchorMax = screenPos;
         predictiveCrosshair.rectTransform.anchorMin = predictiveScreenPos;
         predictiveCrosshair.rectTransform.anchorMax = predictiveScreenPos;
+    }
+    
+    private void OnTargetStateChange(object sender, (Ship.TargetState, Targetable) e)
+    {
+        var state = e.Item1;
+        if (state == Ship.TargetState.NoTarget || state == Ship.TargetState.TrackingInactive)
+        {
+            targetIDText.text = "";
+        }
+        else
+        {
+            targetIDText.text = $"- {e.Item2.ID()} -";
+        }
     }
 }

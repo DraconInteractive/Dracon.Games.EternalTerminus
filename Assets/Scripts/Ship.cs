@@ -15,8 +15,10 @@ public class Ship : MonoBehaviour
     public ShipComponentAnchor[] Anchors;
     public Dock dockedAt;
     
-    private Transform cachedTransform;
-    private Rigidbody rb;
+    private Transform _cachedTransform;
+    private Rigidbody _rb;
+    
+    public Inventory inventory { get; private set; }
     
     #region Flight Variables
     public enum FlightState
@@ -80,14 +82,11 @@ public class Ship : MonoBehaviour
     [FoldoutGroup("Flight/Main"), SerializeField, ReadOnly]
     private float throttleDeadzone;
     [ShowInInspector, FoldoutGroup("Flight/Properties")]
-    public float TargetSpeed
-    {
-        get
-        {
-            //float tSpeed = Mathf.Lerp(0, MaxSpeed, Throttle);
-            return MaxSpeed * Throttle;
-        }
-    }
+    public float TargetSpeed => MaxSpeed * Throttle;
+
+    public float NormalizedTargetSpeed => TargetSpeed / MaxSpeed;
+    public float NormalizedSpeed => Speed / MaxSpeed;
+
     [FoldoutGroup("Flight/Rotation Speed"), SerializeField, ReadOnly]
     private float yawSpeed, rollSpeed, pitchSpeed;
     
@@ -119,10 +118,11 @@ public class Ship : MonoBehaviour
     public float scanRange;
     [FoldoutGroup("Targeting"), ReadOnly]
     public bool trackingTargets;
-    public (BaseTargetable, float) trackedTarget;
+    public (Targetable, float) trackedTarget;
     [FoldoutGroup("Targeting"), ReadOnly]
     public TargetState targetingState;
 
+    public EventHandler<(TargetState, Targetable)> onTargetStateChange;
     #endregion
     public delegate void OnAttachComponent(ShipComponentAnchor anchor, ShipComponent component);
     public OnAttachComponent onComponentAttached;
@@ -131,8 +131,9 @@ public class Ship : MonoBehaviour
 
     private void Awake()
     {
-        cachedTransform = transform;
-        rb = GetComponent<Rigidbody>();
+        _cachedTransform = transform;
+        _rb = GetComponent<Rigidbody>();
+        inventory = GetComponent<Inventory>();
     }
 
     private void Start()
@@ -293,8 +294,8 @@ public class Ship : MonoBehaviour
     {
         currentSpeed = Mathf.MoveTowards(currentSpeed, TargetSpeed, Acceleration * Time.fixedDeltaTime);
         
-        Vector3 targetPos = cachedTransform.position + cachedTransform.forward * (currentSpeed * Time.deltaTime);
-        rb.MovePosition(targetPos);
+        Vector3 targetPos = _cachedTransform.position + _cachedTransform.forward * (currentSpeed * Time.deltaTime);
+        _rb.MovePosition(targetPos);
         
         Vector3 rotationSolver = new Vector3();
 
@@ -309,7 +310,7 @@ public class Ship : MonoBehaviour
         rotationSolver.x += rotDelta.x;
         rotationSolver.y += rotDelta.y;
         rotationSolver.z += rotDelta.z;
-        rb.MoveRotation(cachedTransform.localRotation * Quaternion.Euler(rotationSolver));
+        _rb.MoveRotation(_cachedTransform.localRotation * Quaternion.Euler(rotationSolver));
     }
     
     public void SetFlightState(FlightState newState)
@@ -563,7 +564,7 @@ public class Ship : MonoBehaviour
     {
         if (!trackingTargets)
         {
-            targetingState = TargetState.TrackingInactive;
+            SetTargetState(TargetState.TrackingInactive);
             return;
         }
         
@@ -584,23 +585,23 @@ public class Ship : MonoBehaviour
 
             if (currentTrackingLevel >= 1)
             {
-                targetingState = TargetState.TargetLocked;
+                SetTargetState(TargetState.TargetLocked);
             }
             else
             {
-                targetingState = TargetState.TargetAcquired;
+                SetTargetState(TargetState.TargetAcquired);
             }
         }
         else
         {
-            targetingState = TargetState.NoTarget;
+            SetTargetState(TargetState.NoTarget);
         }
     }
     
     public void ToggleTargetTracking()
     {
         trackingTargets = !trackingTargets;
-        trackedTarget = (null, 0);
+        ChangeTarget(null);
     }
 
     public enum FindTargetMethod
@@ -615,12 +616,12 @@ public class Ship : MonoBehaviour
         if (!trackingTargets)
         {
             Debug.Log("Not tracking");
-            trackedTarget = (null, 0);
+            ChangeTarget(null);
             return;
         }
 
-        BaseTargetable tempTarget = null;
-        var viableTargets = BaseTargetable.All
+        Targetable tempTarget = null;
+        var viableTargets = Targetable.All
             .Where(x => Vector3.Distance(x.Position(), transform.position) < scanRange);
         
         if (method == FindTargetMethod.Closest)
@@ -652,9 +653,41 @@ public class Ship : MonoBehaviour
                 }
             }
         }
-        trackedTarget = (tempTarget, 0);
+        ChangeTarget(tempTarget);
     }
 
+    private void SetTargetState(TargetState newState)
+    {
+        if (targetingState != newState)
+        {
+            targetingState = newState;
+            onTargetStateChange(this, (targetingState, trackedTarget.Item1));
+        }
+    }
+
+    private void ChangeTarget(Targetable target)
+    {
+        if (trackedTarget.Item1 == target)
+        {
+            return;
+        }
+
+        if (trackedTarget.Item1 != null)
+        {
+            trackedTarget.Item1.onDeath -= OnTargetDeath;
+        }
+
+        trackedTarget = (target, 0);
+        trackedTarget.Item1.onDeath += OnTargetDeath;
+    }
+
+    void OnTargetDeath(object sender, EventArgs e)
+    {
+        var target = (sender as Targetable);
+        target.onDeath -= OnTargetDeath;
+        ChangeTarget(null);
+    }
+    
     #endregion
     void UpdateLog()
     {

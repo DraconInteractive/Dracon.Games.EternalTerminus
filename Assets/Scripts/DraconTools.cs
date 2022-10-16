@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class DraconTools
 {
-    public static Vector3 TargetPredictedPosition(BaseTargetable target, float t)
+    public static Vector3 TargetPredictedPosition(Targetable target, float t)
     {
         if (target == null)
         {
@@ -15,7 +15,7 @@ public static class DraconTools
         return target.Position() + target.velocity * t;
     }
     
-    public static Vector3 TargetPredictedPosition(BaseTargetable target, float projectileSpeed, float targetDistance)
+    public static Vector3 TargetPredictedPosition(Targetable target, float projectileSpeed, float targetDistance)
     {
         if (target == null)
         {

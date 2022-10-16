@@ -62,11 +62,30 @@ public class WeaponComponent : ShipComponent
     public void Fire()
     {
         currentCooldown = data.cooldown;
-        var go = Instantiate(data.projectile, firePoint.position, firePoint.rotation);
-        var projectile = go.GetComponentInChildren<Projectile>();
-        projectile.movementSpeed += Player.Instance.currentShip.Speed;
-        projectile.gameObject.layer = LayerMask.NameToLayer("Player");
-        projectile.movementSpeed = data.projectileSpeed;
+
+        Instantiate(data.muzzleVFXPrefab, firePoint.position, firePoint.rotation);
+        if (data.type == WeaponData.WeaponType.Projectile)
+        {
+            var projectile = Instantiate(data.projectile, firePoint.position, firePoint.rotation);
+            projectile.movementSpeed += Player.Instance.currentShip.Speed;
+            projectile.gameObject.layer = LayerMask.NameToLayer("Player");
+            projectile.movementSpeed = data.projectileSpeed;
+        }
+        else if (data.type == WeaponData.WeaponType.Raycast)
+        {
+            var ray = new Ray(firePoint.position, firePoint.forward);
+            var hit = new RaycastHit();
+            if (Physics.Raycast(ray, out hit, data.range))
+            {
+                if (hit.transform.TryGetComponent(out Pawn pawn))
+                {
+                    float damage = Random.Range(data.damageRange.x, data.damageRange.y);
+                    pawn.OnHit(_anchor.ship, damage);
+                    Instantiate(data.onHitVFXPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+                }
+            }
+        }
+
     }
 
     private void OnDrawGizmos()

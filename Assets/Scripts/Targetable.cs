@@ -3,36 +3,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseTargetable : MonoBehaviour
+public class Targetable : Pawn
 {
-    public static List<BaseTargetable> All = new List<BaseTargetable>();
+    public static List<Targetable> All = new List<Targetable>();
     protected ContextAction[] actions;
     public Vector3 velocity;
-    public virtual string ID()
-    {
-        return this.gameObject.name;
-    }
-    
+
     public virtual Vector3 Position()
     {
-        return transform.position;
+        return alive ? transform.position : Vector3.zero;
     }
 
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
-        Register();
+        RegisterTarget();
     }
-    protected virtual void OnDisable()
+    protected override void OnDisable()
     {
-        Deregister();
+        RemoveTarget();
     }
 
-    public virtual void Register()
+    public virtual void RegisterTarget()
     {
         All.Add(this);
     }
 
-    public virtual void Deregister()
+    public virtual void RemoveTarget()
     {
         All.Remove(this);
     }

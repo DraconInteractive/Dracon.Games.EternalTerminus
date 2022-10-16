@@ -17,9 +17,9 @@ public class WeaponAim : MonoBehaviour
         component = _component;
     }
 
-    public void UpdateAim(BaseTargetable target, Ship.TargetState state)
+    public void UpdateAim(Targetable target, Ship.TargetState state)
     {
-        if (target != null && target is BaseEnemy && state == Ship.TargetState.TargetLocked)
+        if (target != null && target is Enemy && state == Ship.TargetState.TargetLocked)
         {
             Quaternion targetRot = Quaternion.identity;
             float dist = Vector3.Distance(transform.position, target.Position());

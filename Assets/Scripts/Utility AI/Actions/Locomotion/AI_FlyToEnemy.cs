@@ -7,7 +7,7 @@ public class AI_FlyToEnemy : AIAction_Locomotion
 {
     public override bool CanExecute(Ship ship)
     {
-        if (ship.dockedAt != null || BaseTargetable.All.Where(x => x is BaseEnemy).Count() == 0)
+        if (ship.dockedAt != null || Targetable.All.Where(x => x is Enemy).Count() == 0)
         {
             return false;
         }

@@ -12,10 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1b7d0ebc54852439b3e5787cc7c4b7, type: 3}
   m_Name: Missile
   m_EditorClassIdentifier: 
-  displayName: TW_M01
+  type: 0
+  displayName: HT Shock Missile M01
+  damageRange: {x: 0, y: 0}
   cooldown: 2
   range: 150
   trackingFOV: 0.8
-  projectile: {fileID: 2587295597166875601, guid: da2a19caa10affb4e993e0d19f732425,
+  muzzleVFXPrefab: {fileID: 2958646595714277127, guid: 940cfa2ad534df646aa07cc93194467b,
+    type: 3}
+  onHitVFXPrefab: {fileID: 2958646595714277127, guid: 940cfa2ad534df646aa07cc93194467b,
+    type: 3}
+  projectile: {fileID: 2587295597166875602, guid: da2a19caa10affb4e993e0d19f732425,
     type: 3}
   projectileSpeed: 60

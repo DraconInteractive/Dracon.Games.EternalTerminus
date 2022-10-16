@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dock : BaseTargetable 
+public class Dock : Targetable 
 {
     public Transform dockingPoint;
     
@@ -17,7 +17,7 @@ public class Dock : BaseTargetable
         return "Dock";
     }
 
-    private void Start()
+    protected override void Start()
     {
         actions = new []
         {

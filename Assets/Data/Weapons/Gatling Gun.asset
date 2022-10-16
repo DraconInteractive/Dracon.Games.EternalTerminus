@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a1b7d0ebc54852439b3e5787cc7c4b7, type: 3}
-  m_Name: Pulse Laser
+  m_Name: Gatling Gun
   m_EditorClassIdentifier: 
-  type: 0
-  displayName: TwinPeak Pulse Laser P01
-  damageRange: {x: 0, y: 0}
-  cooldown: 0.2
-  range: 90
+  type: 1
+  displayName: Krazka Gatling Gun G01
+  damageRange: {x: 0.1, y: 1}
+  cooldown: 0.05
+  range: 100
   trackingFOV: 0.7
-  muzzleVFXPrefab: {fileID: 2958646595714277127, guid: 940cfa2ad534df646aa07cc93194467b,
+  muzzleVFXPrefab: {fileID: 2699175552623138274, guid: 009c2650260e09c42893671d8ec4b3e4,
     type: 3}
-  onHitVFXPrefab: {fileID: 2958646595714277127, guid: 940cfa2ad534df646aa07cc93194467b,
+  onHitVFXPrefab: {fileID: 8859258623286986670, guid: 78830b5ce9c671849b373c09ff9e32b9,
     type: 3}
   projectile: {fileID: 2406423611870111625, guid: 97ab8485ce0fe454998fcf906b3e0fef,
     type: 3}

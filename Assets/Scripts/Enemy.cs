@@ -2,17 +2,17 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class BaseEnemy : BaseTargetable
+public class Enemy : Targetable
 {
     [ReadOnly]
     private Rigidbody rb;
 
-    private void Awake()
+    protected override void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Start()
+    protected override void Start()
     {
         actions = new []
         {
