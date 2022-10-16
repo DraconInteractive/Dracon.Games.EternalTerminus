@@ -20,6 +20,7 @@ public class Pawn : SerializedMonoBehaviour
     protected virtual void Start()
     {
         alive = true;
+        currentHealth = maxHealth;
     }
 
     protected virtual void OnEnable()
